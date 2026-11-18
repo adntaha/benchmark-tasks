@@ -1,19 +1,24 @@
 """totekit: an attached-lid tote (a flip-top container: a tub with two lids hinged on its long sides, whose free edges
-meet along a stepped seam, each lid wider in one half and narrower in the other), for yam_arena task files.
+meet along an S-shaped seam traced from a product photo: each lid has one full tooth and a half tooth), for yam_arena task files.
 
     import pathlib, sys
     sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
     import totekit as K
 
 The tote is one articulation: the tub is the root (a free body on the table) and each lid is a link on a revolute joint
-about the tub's x axis (its long axis), at the top outer edge of a long wall. Every part is made of cuboid colliders:
-the lids' overlap (in each half of the seam the wider lid has a raised flange over the other lid's low tongue) is real boxes,
-so the two lids collide with each other where they meet; whether a lid closed first blocks the second is the geometry's
-doing (measured, see the README). There is no snap or latch: a lid shut on the rim stays there by its weight.
+about the tub's x axis (its long axis), at the top outer edge of a long wall. Every part is made of cuboid colliders, except the three
+diagonal sections of each lid's plate, which are convex prisms (trapezoids in plan view) so that the seam's diagonals are true straight
+lines: the lids' overlap is real boxes: the lid tops are flush across the seam, and under the top surface the wider lid of each straight
+run has a thin overhang (an upper layer) lying over a thin tongue of the other lid. Whether a lid closed first blocks the second is
+the geometry's doing (measured, see the README). The model has no snap or latch; a shut lid is held by its weight.
 
 Joint angles (rad), measured on each lid as the angle it is open by (theta, 0 closed and flat on the rim, 90 standing
-up, 180 flat outward, THETA_OPEN resting open flat against the hinge stop); the simulator's own joint angle is -theta for the
+up, THETA_START = 180 flat outward (the lid lying on its support), THETA_STOP = 265 the hinge stop, the lid hanging almost straight
+down against the outside of the long wall, as in the manufacturer's video); the simulator's own joint angle is -theta for the
 +y lid and +theta for the -y lid. :func:`lid_angles` returns thetas.
+
+In the product the open lids do not stay flat: they swing to about 270 degrees and hang. A trial therefore starts with both lids
+lying flat at THETA_START, each on a fixed support beside the tote (:func:`support_specs`).
 
 ``on_step`` and ``on_reset`` register callbacks ``fn(env)``. Pure Python at import time; Isaac Sim is reached only when
 the scene is built. The hooks are installed through ``sys.meta_path`` the way yam_arena's own modules need (the task
@@ -33,29 +38,44 @@ from yam_arena.task_file import Box, ObjectState
 
 __all__ = ["Tote", "ToteState", "finger_points", "install", "lid_angles", "lid_point", "on_reset", "on_step"]
 
-# -- the Akro-Mils 39085 attached lid container, outside dimensions as listed by retailers (m) -------------------------
-LENGTH, WIDTH, HEIGHT = 0.5461, 0.381, 0.2286     # 21.5 x 15 x 9 in; the maker's own page is reported to say 15.25 in wide
+# -- the Akro-Mils 39085 attached lid container, outside dimensions as on the retailer listings the team used (m) -------------------------
+LENGTH, WIDTH, HEIGHT = 0.5461, 0.381, 0.2286     # 21.5 x 15 x 9 in; some listings give the width as 15.25 in, the model uses 15
 # -- ESTIMATED geometry and masses (not from a catalogue): see README -----------------------------------------------------
 WALL = 0.004                    # wall thickness
 FLOOR = 0.008                   # floor thickness
 LID_T = 0.004                   # lid plate thickness
-HINGE_OUT = 0.004               # the hinge axis sits this far outside the wall's outer face, so a hanging lid clears it
+HINGE_OUT = 0.004               # the hinge axis sits this far outside the rim band, so a hanging lid clears it
 LID_LEN = LENGTH - 0.008        # the lid's length along the hinge
-CENTRE_GAP = 0.010              # each lid's low plate ends this far from the tote's centre line (low tongues cross it)
-OVERLAP = 0.008                 # a raised finger reaches this far past the centre line over the other lid's low tongue
-LIP_LEVEL = 0.016               # the raised fingers' underside is this far above the plate's lower face (a 12 mm air gap)
-RISER_T = 0.004                 # the riser carrying a raised finger
-TONGUE_STOP = 0.002             # a low tongue stops this short of the other lid's riser
-SEAM_OFFSET = 0.0175            # ESTIMATE (about 9 % of a lid's width): the seam's centre line is this far toward -y in the
-                                # -x half and toward +y in the +x half, with a 45 degree jog between
-JOG_HALF = 0.0085               # half the jog's length along x (45 degrees: the lids' edges move 2 x JOG_HALF)
-JOG_STEPS = 4                   # the diagonal is built as this many small steps
+SEAM_GAP = 0.002                # the visible gap between the two lids' top surfaces (flush tops)
+LAP_OV = 0.010                  # ESTIMATE (hidden): the tongue of the lower-lapping lid reaches this far under the overhang of the other
+LAP_CLEAR = 0.002               # the overlying lid's full-thickness plate stops this far short of the tongue's tip
+OVER_W0 = 0.0018                # the overhang (upper layer) spans w 1.8 mm to the 4 mm top: 2.2 mm thick, flush with the top
+TONGUE_T = 0.0012               # the tongue spans w 0 to 1.2 mm, 0.6 mm clear of the overhang's underside
+SEAM_OFFSET = 0.030             # ESTIMATE from product photos (+-1.5 cm): the seam line is this far from the tote's centre line, toward +y in
+                                # the high runs and toward -y in the low runs (6 cm between the levels). The hang limit is
+                                # HINGE_Y + SEAM_OFFSET < HEIGHT - 3 mm: an overlying lid's top edge hangs this far below its hinge
+# The seam along x (tote frame), traced from a retailer product photo of the grey 39085 (a rectified top view of the closed lids, see README), ESTIMATED to about
+# +-1.5 cm: end run R0 (high, y +SEAM_OFFSET), a diagonal, a long run R1 (low), the short middle diagonal, a long run R2 (high), a
+# diagonal, end run R3 (low). Point-symmetric about the tote's centre. The short jogs the photo shows at the seal blocks are not modelled.
+# Breakpoints in x (m): the end of R0, the start of R1, the end of R1, the start of R2, the end of R2, the start of R3.
+SEAM_X = (-0.215, -0.158, -0.030, 0.030, 0.158, 0.215)
+# each diagonal is one straight-edged piece of plain plate: a convex prism (a trapezoid in plan view, 4 mm thick) whose edge runs in a
+# straight line between the neighbouring runs' edges (about 45 degrees; the lids keep a constant 2 mm gap, measured along y)
 BLOCK = (0.020, 0.025, 0.008)   # raised seal block at each lid's seam end (x, u, height); the hole is a gap in it
 TOTE_MASS, LID_MASS = 1.9, 0.4  # kg
 LID_DAMPING = 0.15              # N m s / rad: viscous hinge friction
-THETA_OPEN = math.radians(180.0)   # ESTIMATE: the hinge stop; a lid opens this far and rests against it, flat out beside the wall
+THETA_STOP = math.radians(265.0)   # ESTIMATE: the hinge stop. The video shows an open lid hanging nearly straight down (about 270
+                                   # degrees from closed); 265 keeps the plate off the rim band and the tapered wall
+THETA_START = math.radians(180.0)  # the trial's start: each lid lies flat, outward, on a fixed support (not a product stop)
+# fixed supports beside the tote (ESTIMATED/designed for the task, not part of the product); the lid's near end overhangs by SUPPORT_OVERHANG
+SUPPORT_OVERHANG = 0.100        # m: the lid's near end (x -LID_LEN/2) sticks out this far past the support, for the lower gripper pad
+SUPPORT_U0, SUPPORT_U1 = 0.120, 0.250  # the support lies under the lid between these distances from the hinge axis: beyond the bosses (u up to
+                                        # 9.2 cm) and the embossed logos (u up to about 11.5 cm), and 2.5 cm or more beyond the lid's outer edge
+SUPPORT_X1 = 0.215              # the support's far end, tote-frame x (2.4 cm short of the far end's seal block, clear of its lug)
+SUPPORT_TOP = HEIGHT - LID_T    # the support top is the plate's underside at 180 degrees: 4 mm below the rim plane
+SUPPORT_GAP = 0.0               # (tote-frame) the support top equals the plate underside; no gap
 
-# -- product-photo details, all ESTIMATED from a description of the photo (see README) ----------------------------------
+# -- product-photo details, all ESTIMATED from product photos (see README) ----------------------------------
 A_TOP = 0.006                   # the wall's outer face is this far in from the rim band's outer face (the band stands proud)
 A_BASE = 0.025                  # the wall's outer face at the base is this far in from the rim outline (nestable taper)
 RIM_H, RIM_T = 0.035, 0.012     # rim band: height and horizontal thickness
@@ -66,10 +86,11 @@ SLOT_H, SLOT_GAP = 0.020, 0.004     # slots under the rim band: height, and the 
 SLOT_W_LONG, SLOT_W_END = 0.060, 0.050
 RIB_W, RIB_PROUD = 0.014, 0.003     # visual ribs between the recessed panels
 LUG = (0.050, 0.030, 0.007)         # lid stacking lug (x, u, height) at each outer corner, u from the hinge side
-LUG_U0, LUG_X0 = 0.016, 0.200       # lug starts this far from the hinge axis and this far from the lid's middle (|x|)
+LUG_U0, LUG_X0 = 0.050, 0.200       # lug starts this far from the hinge axis and this far from the lid's middle (|x|)
 HOLE = 0.006                        # square hole through each seal block (a gap between boxes, not round)
 KNUCKLES, KNUCKLE_LEN, KNUCKLE_R = 7, 0.040, 0.006     # visual hinge knuckles per side
-BOSS_R, BOSS_H, BOSS_U, BOSS_X = 0.012, 0.003, 0.080, 0.100   # two round bosses on each lid's top (visual only)
+BOSS_R, BOSS_H, BOSS_U, BOSS_X = 0.012, 0.003, 0.080, 0.140   # two bosses on each lid's top, 3 mm proud, modelled as 2.13 cm squares
+BOSS_SQ = BOSS_R * math.sqrt(math.pi)   # side of the square with the area of the 2.4 cm round boss
 
 
 def inset(z: float) -> float:
@@ -150,35 +171,63 @@ def tub_parts() -> list:
 
 
 HINGE_Y = WIDTH / 2 + HINGE_OUT                 # |y| of the hinge axes
-PLATE_LEN = HINGE_Y - CENTRE_GAP                # hinge axis to the low plate's edge (the riser's face)
-FINGER_REACH = HINGE_Y + OVERLAP                # (nominal, seam on the centre line) hinge axis to a raised flange's tip
-TONGUE_REACH = HINGE_Y + CENTRE_GAP - TONGUE_STOP   # (nominal) hinge axis to a low tongue's tip
+
+
+def _run_list():
+    """(x0, x1, seam centre y, wider lid side) of the four straight runs. Where the seam is high (+y) the -y lid is the wider one."""
+    xs = (-LID_LEN / 2,) + SEAM_X + (LID_LEN / 2,)
+    spans = [(xs[0], xs[1]), (xs[2], xs[3]), (xs[4], xs[5]), (xs[6], xs[7])]
+    levels = [+1, -1, +1, -1]
+    return [(a, b, lv * SEAM_OFFSET, -lv) for (a, b), lv in zip(spans, levels)]
+
+
+# (x0, x1, seam centre y, the lid side that is the wider one there)
+RUNS = _run_list()
+DIAGONALS = [(SEAM_X[0], SEAM_X[1], 0, 1), (SEAM_X[2], SEAM_X[3], 1, 2), (SEAM_X[4], SEAM_X[5], 2, 3)]   # (x0, x1, run before, run after)
 
 
 def centre_y(x: float) -> float:
-    """The seam's centre line (world/tote-frame y) at tote-frame ``x`` outside the jog: -SEAM_OFFSET for x < 0, else +."""
-    return -SEAM_OFFSET if x < 0 else SEAM_OFFSET
+    """The seam's centre line (tote-frame y) at tote-frame ``x`` in the straight runs (the diagonals in between are plain plate)."""
+    for x0, x1, yc, _ in RUNS:
+        if x0 <= x <= x1:
+            return yc
+    raise ValueError("x is on a diagonal or off the lid")
 
 
-WIDE = {-1: +1, +1: -1}      # zone (sign of x) -> the lid side that is wider there: the +y lid in the -x half, the -y lid in the +x half
+def _edge(side: int, yc: float, wide: int):
+    """(top-surface edge u, role) of the lid at ``side`` in a straight run with seam line yc and wider lid ``wide``: distance from
+    the hinge axis to the lid's top-surface edge. The wider lid ("over") ends exactly at the seam line with an overhang; the other
+    lid ("tongue") stops SEAM_GAP short of it and has a thin tongue reaching LAP_OV under the overhang."""
+    d = HINGE_Y - side * yc                                 # hinge axis to the seam line
+    return (d, "over") if wide == side else (d - SEAM_GAP, "tongue")
 
 
 def lid_zones(side: int) -> list[dict]:
-    """The lid at ``side``'s free-edge profile along x: zones with x0, x1, the low plate's end u_end (distance from the
-    hinge axis), and for the wider lid a raised flange: u_flange_tip. The jog is a staircase of plain low steps."""
-    def ends(zone):                                         # zone: -1 (the -x half) or +1
-        yc = -SEAM_OFFSET if zone < 0 else SEAM_OFFSET
-        if WIDE[zone] == side:                              # wider here: low plate to its edge, a riser there, a raised flange over the other lid
-            return HINGE_Y - side * yc - CENTRE_GAP, HINGE_Y - side * yc + OVERLAP
-        return HINGE_Y - side * yc + CENTRE_GAP - TONGUE_STOP, None   # narrower: a low tongue under the other lid's flange
-
-    (u1, f1), (u3, f3) = ends(-1), ends(+1)
-    zones = [dict(x0=-LID_LEN / 2, x1=-JOG_HALF, u_end=u1, flange=f1), dict(x0=JOG_HALF, x1=LID_LEN / 2, u_end=u3, flange=f3)]
-    for k in range(JOG_STEPS):
-        a, b = -JOG_HALF + 2 * JOG_HALF * k / JOG_STEPS, -JOG_HALF + 2 * JOG_HALF * (k + 1) / JOG_STEPS
-        u = u1 + (u3 - u1) * (k + 0.5) / JOG_STEPS
-        zones.append(dict(x0=a, x1=b, u_end=u, flange=None))
+    """The lid at ``side``'s free-edge profile along x: zones with x0, x1, the top-surface edge u_end (distance from the hinge axis),
+    and the role in a straight run ('over' or 'tongue'; None on a diagonal). Each of the three diagonals is one zone (``diag`` True)
+    of plain plate whose edge is the straight line from u_a at x0 to u_b at x1 (the neighbouring runs' edges; the lids keep a constant 2 mm
+    gap there); its u_end is the larger of the two, the zone's farthest reach."""
+    ends = [_edge(side, yc, wide) for _, _, yc, wide in RUNS]
+    zones = [dict(x0=x0, x1=x1, u_end=ends[i][0], role=ends[i][1], run=i) for i, (x0, x1, _, _) in enumerate(RUNS)]
+    for x0, x1, i0, i1 in DIAGONALS:
+        u0, u1 = ends[i0][0], ends[i1][0]
+        zones.append(dict(x0=x0, x1=x1, u_a=u0, u_b=u1, u_end=max(u0, u1), role=None, run=None, diag=True))
     return zones
+
+
+def diag_edge_u(z: dict, x: float) -> float:
+    """The plate's free-edge u at ``x`` inside a diagonal zone (a straight line from u_a at x0 to u_b at x1)."""
+    return z["u_a"] + (z["u_b"] - z["u_a"]) * (x - z["x0"]) / (z["x1"] - z["x0"])
+
+
+def lid_outline(side: int) -> list:
+    """The top surface's free edge of the lid at ``side`` as a polyline of (x, y) points in the tote frame, from the lid's near end to its
+    far end (the plate's seam-side outline: straight runs and the straight diagonals between them)."""
+    pts = []
+    for z in sorted(lid_zones(side), key=lambda z: z["x0"]):
+        ua, ub = (z["u_a"], z["u_b"]) if z.get("diag") else (z["u_end"], z["u_end"])
+        pts += [(z["x0"], side * (HINGE_Y - ua)), (z["x1"], side * (HINGE_Y - ub))]
+    return pts
 
 
 @dataclass(frozen=True)
@@ -215,7 +264,9 @@ def _rotation(q) -> np.ndarray:
                      [2 * (x * z - w * y), 2 * (y * z + w * x), 1 - 2 * (x * x + y * y)]])
 
 
-GAUGE_X = {+1: -(LID_LEN / 2 + JOG_HALF) / 2, -1: (LID_LEN / 2 + JOG_HALF) / 2}   # middle of the straight seam section where each lid is the wider one
+# Measuring points: the middle of the long straight run in which the lid is the wider one: R1 (the low run, x -9.4 cm) for the +y lid,
+# R2 (the high run, x +9.4 cm) for the -y lid.
+GAUGE_X = {+1: (RUNS[1][0] + RUNS[1][1]) / 2, -1: (RUNS[2][0] + RUNS[2][1]) / 2}
 
 
 def gauge_u(side: int) -> float:
@@ -236,6 +287,78 @@ def lid_point(side: int, theta: float, s: float, offset: float = 0.0, x: float =
     n = np.array([side * math.sin(theta), math.cos(theta)])             # normal of the face turned toward the wall/ground
     yz = np.array([side * HINGE_Y, HEIGHT]) + s * d + offset * n
     return np.array([x, yz[0], yz[1]])
+
+
+def lid_parts(side: int) -> list:
+    """Every collision box of the lid at ``side`` as (tag, u0, u1, w0, w1, x0, x1): u from the hinge axis along the lid, w off the
+    plate's lower face (up when the lid is shut), x along the hinge. Plate, overhangs, tongues, seal blocks (with their holes), lugs and bosses."""
+    out = []
+    zones = lid_zones(side)
+    for zi, z in enumerate(zones):
+        if z.get("diag"):                                   # a diagonal: the prism's bounding box (the real piece is in diag_prisms)
+            out.append((f"edge_{zi}", 0.0, z["u_end"], 0.0, LID_T, z["x0"], z["x1"]))
+        elif z["role"] == "over":                           # full plate, then an overhang (upper layer, flush top) over the other's tongue
+            uf = z["u_end"] - LAP_OV - LAP_CLEAR
+            out.append((f"edge_{zi}", 0.0, uf, 0.0, LID_T, z["x0"], z["x1"]))
+            out.append((f"over_{zi}", uf, z["u_end"], OVER_W0, LID_T, z["x0"], z["x1"]))
+        elif z["role"] == "tongue":                         # full plate, then a thin lower tongue reaching under the other lid's overhang
+            out.append((f"edge_{zi}", 0.0, z["u_end"], 0.0, LID_T, z["x0"], z["x1"]))
+            out.append((f"tongue_{zi}", z["u_end"], z["u_end"] + SEAM_GAP + LAP_OV, 0.0, TONGUE_T, z["x0"], z["x1"]))
+        else:
+            out.append((f"edge_{zi}", 0.0, z["u_end"], 0.0, LID_T, z["x0"], z["x1"]))
+    for e in (1, -1):                                       # raised seal block at each seam end, with a square hole through it
+        xa, xb = sorted((e * (LID_LEN / 2 - 0.030), e * (LID_LEN / 2 - 0.010)))
+        ub = next(z["u_end"] for z in zones if z["x0"] <= (xa + xb) / 2 <= z["x1"]) - 0.025     # 2.5 cm inside the local plate edge
+        ua = ub - BLOCK[1]
+        xc, uc, h = (xa + xb) / 2, (ua + ub) / 2, HOLE / 2
+        t, zt_ = f"block_{'ew'[e < 0]}", LID_T + BLOCK[2]
+        out += [(t + "_a", ua, ub, LID_T, zt_, xa, xc - h), (t + "_b", ua, ub, LID_T, zt_, xc + h, xb),
+                (t + "_c", ua, uc - h, LID_T, zt_, xc - h, xc + h), (t + "_d", uc + h, ub, LID_T, zt_, xc - h, xc + h)]
+    for e in (1, -1):                                       # stacking lug at each outer corner, on the hinge side
+        out.append((f"lug_{'ew'[e < 0]}", LUG_U0, LUG_U0 + LUG[1], LID_T, LID_T + LUG[2], *sorted((e * LUG_X0, e * (LUG_X0 + LUG[0])))))
+    for e in (1, -1):                                       # two bosses on the top face (square boxes of the round boss's area)
+        bh = BOSS_SQ / 2
+        out.append((f"boss_{'ew'[e < 0]}", BOSS_U - bh, BOSS_U + bh, LID_T, LID_T + BOSS_H, e * BOSS_X - bh, e * BOSS_X + bh))
+    return out
+
+
+def diag_prisms(side: int) -> dict:
+    """The lid's diagonal plate pieces as {tag: eight vertices (x, u, w)}: a convex prism 0 to LID_T thick whose plan view is the
+    trapezoid x0..x1, u from 0 (the hinge axis) to the straight free edge. The tag is that of the matching bounding box in lid_parts."""
+    out = {}
+    for zi, z in enumerate(lid_zones(side)):
+        if z.get("diag"):
+            quad = [(z["x0"], 0.0), (z["x1"], 0.0), (z["x1"], z["u_b"]), (z["x0"], z["u_a"])]
+            out[f"edge_{zi}"] = [(x, u, w) for w in (0.0, LID_T) for x, u in quad]
+    return out
+
+
+def lid_box_world(side: int, theta: float, part):
+    """A lid box (see lid_parts) posed at opening angle ``theta``: (centre, 3x3 rotation, half sizes), tote frame (origin the middle of
+    the footprint on the table, z up). Used by the offline clearance tests."""
+    _, u0, u1, w0, w1, x0, x1 = part
+    a = -side * theta                                       # the simulator's joint angle about +x
+    rot = np.array([[1, 0, 0], [0, math.cos(a), -math.sin(a)], [0, math.sin(a), math.cos(a)]])
+    local = np.array([(x0 + x1) / 2, -side * (u0 + u1) / 2, (w0 + w1) / 2])
+    centre = np.array([0.0, side * HINGE_Y, HEIGHT]) + rot @ local
+    return centre, rot, np.array([x1 - x0, u1 - u0, w1 - w0]) / 2
+
+
+def support_specs() -> list:
+    """The two fixed supports as (side, x0, x1, y0, y1, top): the lid at ``side`` lies on its flat top surface between SUPPORT_U0 and
+    SUPPORT_U1 from its hinge axis, from SUPPORT_OVERHANG short of its near end to SUPPORT_X1. Tote frame; the top is a height above
+    the table. Each is a flat-topped block standing on the table, fixed there."""
+    x0 = -LID_LEN / 2 + SUPPORT_OVERHANG
+    out = []
+    for side in (+1, -1):
+        ya, yb = sorted((side * (HINGE_Y + SUPPORT_U0), side * (HINGE_Y + SUPPORT_U1)))
+        out.append((side, x0, SUPPORT_X1, ya, yb, SUPPORT_TOP))
+    return out
+
+
+def max_hang_reach() -> float:
+    """The farthest any lid box reaches from the hinge axis (u), which must stay under HEIGHT for the lid to hang clear of the table."""
+    return max(p[2] for side in (+1, -1) for p in lid_parts(side))
 
 
 # -- authoring helpers --------------------------------------------------------------------------------------------------
@@ -320,6 +443,42 @@ class _Author:
         bind_physics_material(str(prim.GetPath()), mat, stage=self.stage)
         return prim
 
+    def prism(self, path, verts, faces, look, mat):
+        """A convex mesh collider (convex hull) with flat-shaded outward faces; ``verts`` are body-frame points, ``faces`` index lists."""
+        from isaaclab.sim.utils import bind_physics_material, bind_visual_material
+        from pxr import PhysxSchema, UsdPhysics, Vt
+
+        pts = np.array(verts, float)
+        centre = pts.mean(0)
+        counts, idx, normals = [], [], []
+        for f in faces:
+            f = list(f)
+            n = np.cross(pts[f[1]] - pts[f[0]], pts[f[2]] - pts[f[0]])
+            if n @ (pts[f].mean(0) - centre) < 0:
+                f.reverse()
+                n = -n
+            n = n / np.linalg.norm(n)
+            counts.append(len(f))
+            idx += f
+            normals += [self.Gf.Vec3f(*(float(v) for v in n))] * len(f)
+        mesh = self.UsdGeom.Mesh.Define(self.stage, path)
+        mesh.CreatePointsAttr(Vt.Vec3fArray([self.Gf.Vec3f(*(float(v) for v in p)) for p in pts]))
+        mesh.CreateFaceVertexCountsAttr(counts)
+        mesh.CreateFaceVertexIndicesAttr(idx)
+        mesh.CreateNormalsAttr(Vt.Vec3fArray(normals))
+        mesh.SetNormalsInterpolation("faceVarying")
+        mesh.CreateSubdivisionSchemeAttr("none")
+        mesh.CreateDoubleSidedAttr(False)
+        prim = mesh.GetPrim()
+        bind_visual_material(str(prim.GetPath()), look, stage=self.stage)
+        UsdPhysics.CollisionAPI.Apply(prim)
+        UsdPhysics.MeshCollisionAPI.Apply(prim).CreateApproximationAttr("convexHull")
+        cp = PhysxSchema.PhysxCollisionAPI.Apply(prim)
+        cp.CreateContactOffsetAttr(0.0008)
+        cp.CreateRestOffsetAttr(0.0)
+        bind_physics_material(str(prim.GetPath()), mat, stage=self.stage)
+        return prim
+
     def cylinder(self, path, centre, radius, height, axis, look):
         """A visual-only cylinder (no collider)."""
         from isaaclab.sim.utils import bind_visual_material
@@ -356,32 +515,17 @@ def _spawn_tote(prim_path: str, cfg, translation=None, orientation=None, **kwarg
         body = f"{prim_path}/{jname}"
         a.body(body, (0.0, side * HINGE_Y, HEIGHT), LID_MASS, ang_damp=0.05)
         # lid frame: origin on the hinge axis at the plate's lower face; the closed plate runs toward the centre line
-        # (local y = -side * u) with u the distance from the hinge axis. Boxes are given as (u0, u1, w0, w1, x0, x1).
-        def lidbox(tag, u0, u1, w0, w1, x0, x1, collide=True):
-            a.box(f"{body}/{tag}", ((x0 + x1) / 2, -side * (u0 + u1) / 2, (w0 + w1) / 2), (x1 - x0, u1 - u0, w1 - w0), lid_grey, m_lid,
-                  collide=collide)
-
-        for zi, z in enumerate(lid_zones(side)):
-            lidbox(f"edge_{zi}", 0.0, z["u_end"], 0.0, LID_T, z["x0"], z["x1"])
-            if z["flange"] is not None:                         # the wider lid's raised flange on a riser, over the other's tongue
-                lidbox(f"riser_{zi}", z["u_end"] - RISER_T, z["u_end"], 0.0, LIP_LEVEL + LID_T, z["x0"], z["x1"])
-                lidbox(f"flange_{zi}", z["u_end"] - RISER_T, z["flange"], LIP_LEVEL, LIP_LEVEL + LID_T, z["x0"], z["x1"])
-        for e in (1, -1):                                       # raised seal block at each seam end, with a square hole through it
-            ua, ub = PLATE_LEN - 0.025 - BLOCK[1], PLATE_LEN - 0.025
-            xa, xb = sorted((e * (LID_LEN / 2 - 0.030), e * (LID_LEN / 2 - 0.010)))
-            xc, uc, h = (xa + xb) / 2, (ua + ub) / 2, HOLE / 2
-            t, zt_ = f"block_{'ew'[e < 0]}", LID_T + BLOCK[2]
-            lidbox(t + "_a", ua, ub, LID_T, zt_, xa, xc - h)
-            lidbox(t + "_b", ua, ub, LID_T, zt_, xc + h, xb)
-            lidbox(t + "_c", ua, uc - h, LID_T, zt_, xc - h, xc + h)
-            lidbox(t + "_d", uc + h, ub, LID_T, zt_, xc - h, xc + h)
-        for e in (1, -1):                                       # stacking lug at each outer corner, on the hinge side
-            lidbox(f"lug_{'ew'[e < 0]}", LUG_U0, LUG_U0 + LUG[1], LID_T, LID_T + LUG[2], *sorted((e * LUG_X0, e * (LUG_X0 + LUG[0]))))
+        # (local y = -side * u) with u the distance from the hinge axis. Boxes are (tag, u0, u1, w0, w1, x0, x1).
+        prisms = diag_prisms(side)
+        for tag, u0, u1, w0, w1, x0, x1 in lid_parts(side):
+            if tag in prisms:                                   # a diagonal: a convex prism in the lid frame (local y = -side * u)
+                v = [(x, -side * u, w) for x, u, w in prisms[tag]]
+                a.prism(f"{body}/{tag}", v, [(0, 1, 2, 3), (4, 5, 6, 7), (0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6), (3, 0, 4, 7)], lid_grey, m_lid)
+                continue
+            a.box(f"{body}/{tag}", ((x0 + x1) / 2, -side * (u0 + u1) / 2, (w0 + w1) / 2), (x1 - x0, u1 - u0, w1 - w0), lid_grey, m_lid)
         for k in range(KNUCKLES):                               # visual hinge knuckles centred on the axis
             kx = -(LID_LEN / 2 - KNUCKLE_LEN / 2 - 0.004) + k * (LID_LEN - KNUCKLE_LEN - 0.008) / (KNUCKLES - 1)
             a.cylinder(f"{body}/knuckle_{k}", (kx, 0.0, 0.0), KNUCKLE_R, KNUCKLE_LEN, "X", lid_grey)
-        for e in (1, -1):                                       # two round bosses on the top face (visual only)
-            a.cylinder(f"{body}/boss_{'ew'[e < 0]}", (e * BOSS_X, -side * BOSS_U, LID_T + BOSS_H / 2), BOSS_R, BOSS_H, "Z", lid_grey)
         j = UsdPhysics.RevoluteJoint.Define(stage, f"{body}/{jname}")
         j.CreateAxisAttr("X")
         j.CreateBody0Rel().SetTargets([Sdf.Path(tub)])
@@ -390,7 +534,7 @@ def _spawn_tote(prim_path: str, cfg, translation=None, orientation=None, **kwarg
         j.CreateLocalRot0Attr(Gf.Quatf(1, 0, 0, 0))
         j.CreateLocalPos1Attr(Gf.Vec3f(0.0, 0.0, 0.0))
         j.CreateLocalRot1Attr(Gf.Quatf(1, 0, 0, 0))
-        lo, hi = (-math.degrees(THETA_OPEN), 0.0) if side > 0 else (0.0, math.degrees(THETA_OPEN))
+        lo, hi = (-math.degrees(THETA_STOP), 0.0) if side > 0 else (0.0, math.degrees(THETA_STOP))
         j.CreateLowerLimitAttr(float(lo))
         j.CreateUpperLimitAttr(float(hi))
         drive = UsdPhysics.DriveAPI.Apply(j.GetPrim(), "angular")
@@ -425,7 +569,7 @@ def _tote_object(spec: Tote):
             actuators = {"hinges": ImplicitActuatorCfg(joint_names_expr=list(SIDES), stiffness=0.0, damping=LID_DAMPING)}
             cfg = ArticulationCfg(prim_path=self.prim_path, spawn=self.spawner_cfg, actuators=actuators)
             cfg = self._add_initial_pose_to_cfg(cfg)
-            cfg.init_state.joint_pos = {"lid_pos": -THETA_OPEN, "lid_neg": THETA_OPEN}
+            cfg.init_state.joint_pos = {"lid_pos": -THETA_START, "lid_neg": THETA_START}
             return cfg
 
     _SPECS[spec.name] = spec
@@ -476,7 +620,7 @@ def _write_pose(environment, name, pos, quat_xyzw) -> None:
 
 
 def _set_open(environment, name: str, spec) -> None:
-    """Both lids hanging open at the hinge stop, at rest, the tote back on its mark (writing joint positions moves an
+    """Both lids lying flat at THETA_START (on their supports), at rest, the tote back on its mark (writing joint positions moves an
     articulation's root, so the root pose is written again after them)."""
     import torch
 
@@ -484,7 +628,7 @@ def _set_open(environment, name: str, spec) -> None:
     names = list(asset.joint_names)
     ids = [names.index(j) for j in SIDES]
     dev = _t(asset.data.joint_pos).device
-    pos = torch.tensor([[-SIDES[j] * THETA_OPEN for j in SIDES]], dtype=torch.float32, device=dev)
+    pos = torch.tensor([[-SIDES[j] * THETA_START for j in SIDES]], dtype=torch.float32, device=dev)
     fn = getattr(asset, "write_joint_state_to_sim_index", None)
     if fn is not None:
         fn(position=pos, velocity=torch.zeros_like(pos), joint_ids=ids, env_ids=[0])

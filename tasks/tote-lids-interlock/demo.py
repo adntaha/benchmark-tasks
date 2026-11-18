@@ -1,6 +1,8 @@
-"""The scripted demo for the tote task. Each arm pinches the near end of its own lid between its fingers, swings the lid up
+"""The scripted demo for the tote task. Each lid starts lying flat (180 degrees) on its fixed support with its near end sticking out
+10 cm past the support. Each arm pinches that near end of its own lid between its gripper pads (one pad above, one below the plate),
+lifts the lid off the support, swings the lid up
 past upright and down again to a few degrees short of flat (both arms on the same clock, so the lids come down together),
-lets go, withdraws, and presses the lid's edge down lightly with the closed fingers so it sits flat on the rim; then both
+lets go, withdraws, and presses the lid's edge down lightly with the closed gripper so it sits flat on the rim; then both
 arms withdraw and go home.
 
 Open loop from the fixed starting layout: every target is computed from the tote's dimensions and mark in ``task.py`` and
@@ -9,7 +11,7 @@ Open loop from the fixed starting layout: every target is computed from the tote
 Environment variable ``TOTE_MODE`` selects control runs (default ``both``):
   both     the demo
   nopress  both lids lowered together, released, no final press
-  stay     both lids lowered together and released, the fingers stay at the lids (never withdrawn) until the run ends
+  stay     both lids lowered together and released, the grippers stay at the lids (never withdrawn) until the run ends
   seq      the left lid is closed and seated first, then the right lid is brought down after it
   left     the left arm only
   right    the right arm only
@@ -36,7 +38,7 @@ FULL_OPEN = 0.0939                  # m between the pads at grip command 1.0
 APPROACH_GAP, RELEASE_GAP = 0.060, 0.016
 U_PIN = 0.10                        # the lid is pinched this far out from its hinge axis ...
 X_PIN = -0.259                      # ... at its near end (tote frame x), the pads reaching 1 cm in from the end
-U_PRESS = 0.155                     # the closed fingers press this far out from the hinge
+U_PRESS = 0.130                     # the closed gripper presses this far out from the hinge (on the full-thickness plate of either lid)
 X_PRESS = {1: -0.20, -1: -0.08}     # tote-frame x of each arm's press (staggered so the hands keep apart)
 PRESS_PITCH = math.radians(-45.0)
 PRESS_YAW = math.radians(45.0)      # the pointer leans toward the middle of the tote
@@ -109,7 +111,7 @@ def build(side: int, T, mode: str, delay: float = 0.0, lag: float = 0.0):
     add(T_SWEEP, sweep, 0.0)
     rel = pin_pose(THETA_REL)
     add(0.6, lambda s: rel, gap(RELEASE_GAP))
-    if mode == "stay":                                           # control: let go, then the fingers stay at the lids until the run ends
+    if mode == "stay":                                           # control: let go, then the grippers stay at the lids until the run ends
         hold(rel, 60.0, gap(RELEASE_GAP))
         return plan
     else:
@@ -222,10 +224,35 @@ def install() -> None:
     S.ArmPlan = TrackPlan
 
 
+def hang_pinch_check(T, height=0.02):
+    """Offline IK for pinching a lid that hangs at the hinge stop (THETA_STOP) by its free edge at the near end, ``height`` m above
+    its lowest edge (the edge hangs a few mm above the table), the way the demo pinches the flat lid (approach +x, pads closing across the
+    plate). Returns {side: (u, tool point z above the table, position error mm, rotation error deg)}."""
+    import totekit as K
+    from yam_arena import ik
+    from yam_arena.constants import READY
+
+    o = T.start()
+    out = {}
+    for side in (+1, -1):
+        base = np.array([0.0, 0.305 * side, 0.7475])
+        z0 = next(z for z in K.lid_zones(side) if z["x0"] <= X_PIN <= z["x1"])
+        u = z0["u_end"]                                                              # the lid's free edge, along the plate
+        th = K.THETA_STOP
+        p = o + K.lid_point(side, th, u - height, offset=-K.LID_T / 2, x=X_PIN)
+        n = -side * np.array([0.0, side * math.sin(th), math.cos(th)])
+        q, pe, re = ik.solve(p, ik.matrix_to_quat_xyzw(frame((1.0, 0.0, 0.0), n)), np.array(READY, float), base_pos=base, iters=300)
+        out[side] = (round(u, 4), round(float(p[2] - T.TOP), 4), round(pe * 1000, 1), round(math.degrees(re), 2))
+    return out
+
+
 if __name__ == "__main__":
     import task as T
 
     mode = sys.argv[1] if len(sys.argv) > 1 else "both"
+    if mode == "hang":
+        print("hanging-lid pinch, 2 cm above the free edge (side: u, z above table, pos err mm, rot err deg):", hang_pinch_check(T))
+        sys.exit(0)
     for name, side in (("left", +1), ("right", -1)):
         cmds, mm, deg, bad = solve_plan(side, T, mode)
         print(name, "steps", len(cmds), "worst", round(mm, 1), "mm", round(deg, 1), "deg", "bad", bad[:10], len(bad), flush=True)

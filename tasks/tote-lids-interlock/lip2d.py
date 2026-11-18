@@ -1,22 +1,25 @@
 """2D cross-section (y,z) check of the lids' overlap (offline, numpy only): which (thetaA, thetaB) pairs collide.
 
-The seam is stepped: in the -x half the +y lid ("A") is wider and carries a raised flange over the -y lid's low tongue; in the +x
-half the roles swap. Each half's cross-section is checked (the lids are rigid, so both must be free of contact). Used to
-check the overlap in totekit.py: python lip2d.py prints the jam angle and the lead tolerance."""
+The seam is S-shaped (four straight runs joined by three diagonals, see totekit.py) with flush lid tops. In each straight run the
+wider lid has an overhang (a thin upper layer, flush with the top) over a thin tongue of the other lid; the roles swap between the
+low runs (R1, R3: the +y lid, "A", is wider) and the high runs (R0, R2). The diagonals are plain plate and cannot catch. Both
+kinds of run are checked (the lids are rigid, so both must be free of contact). The constants repeat totekit.py's
+(test_scoring.py compares them). python lip2d.py prints the angle at which a second lid stops against the first, and the lead tolerance."""
 import math
 import numpy as np
 
-H = 0.2286; WIDTH = 0.381; HY = WIDTH / 2 + 0.004; T = 0.004; C = 0.010; RT = 0.004; OV = 0.008; PS = 0.002
-D = 0.0175          # seam offset
-L_DEFAULT = 0.016   # flange level
+H = 0.2286; WIDTH = 0.381; HY = WIDTH / 2 + 0.004; T = 0.004
+G = 0.002; OV = 0.010; CL = 0.002; W0 = 0.0018; TT = 0.0012      # seam gap, tongue reach under the overhang, clearance, overhang's underside, tongue thickness
+D = 0.030           # seam offset (totekit.SEAM_OFFSET)
 
 
-def rects(side, wide, yc, L):
-    """Rectangles (u0, u1, w0, w1) in the lid's frame: u from the hinge axis, w off the lower face."""
+def rects(side, wide, yc):
+    """Rectangles (u0, u1, w0, w1) in the lid's frame: u from the hinge axis, w off the lower face. ``wide``: the overlying lid."""
+    d = HY - side * yc                                      # hinge axis to the seam line
     if wide:
-        ue = HY - side * yc - C
-        return [(0, ue, 0, T), (ue - RT, ue, 0, L + T), (ue - RT, HY - side * yc + OV, L, L + T)]
-    return [(0, HY - side * yc + C - PS, 0, T)]
+        uf = d - OV - CL
+        return [(0, uf, 0, T), (uf, d, W0, T)]
+    return [(0, d - G, 0, T), (d - G, d + OV, 0, TT)]
 
 
 def poly(side, theta, rc):
@@ -45,24 +48,24 @@ def sat(p, q):
     return True
 
 
-def collide(ta, tb, L=L_DEFAULT, d=None):
-    """Whether the +y lid at ta degrees and the -y lid at tb degrees touch in either half of the seam."""
+def collide(ta, tb, d=None):
+    """Whether the +y lid at ta degrees and the -y lid at tb degrees touch in either kind of run of the seam."""
     d = D if d is None else d
     ta, tb = math.radians(ta), math.radians(tb)
     for yc, wide_side in ((-d, +1), (+d, -1)):
-        A = poly(+1, ta, rects(+1, wide_side == +1, yc, L))
-        B = poly(-1, tb, rects(-1, wide_side == -1, yc, L))
+        A = poly(+1, ta, rects(+1, wide_side == +1, yc))
+        B = poly(-1, tb, rects(-1, wide_side == -1, yc))
         if any(sat(a, b) for a in A for b in B):
             return True
     return False
 
 
-def jam_angle(L=L_DEFAULT, d=None):
+def jam_angle(d=None):
     """Opening of the second lid where it stops against the first, shut flat (None if it closes)."""
-    if collide(0, 0, L, d):
+    if collide(0, 0, d=d):
         return float("nan")
     for tb in np.arange(40, -0.01, -0.1):
-        if collide(0, tb, L, d):
+        if collide(0, tb, d=d):
             return round(float(tb), 1)
     return None
 
