@@ -12,14 +12,63 @@ its support, shut both lids, level and seated on the rim, withdraw both grippers
 The lids meet along an S-shaped seam traced from product photos (see "The seam": four straight runs and three diagonals; each
 lid has one full tooth and a half tooth). In the photos their tops are flush across the seam. The model has no snap or latch; a shut lid is held by its weight.
 
-**The mechanism (the product's design as described by the team).** Along the seam each lid's edge alternates between an UPPER lip and
-a LOWER lip, and the two lids' lips interleave: where one lid has the upper lip the other has the lower lip. An upper lip has to slide
-on top of the lower lip. If one lid is lowered first, the second lid's lower lip lands on top of the first lid's upper lip, one step
-(one plate thickness, 4 mm, estimated) above where it must go, and the lids cannot close; so the lids have to come down together. **This
-layering is not visible from above in the photos.** The step, the lap lengths and which lid overlies in each section are estimates. In the
-model (a hidden lap, below) either closing order leaves the second lid resting on the first lid's upper lip. Two videos are cited, each
-only for what the team sees in it: in the seller's product video (https://www.amazon.ca/vdp/09c3c1c46a40487390129b9b26503d1c, about
-0:19-0:25) both lids are shut at the same time; the manufacturer's video (https://youtu.be/B8cnZ48xBc0) and a maker's product image of four totes (two of them open) show the lids hanging.
+## Evidence for the seam and the closing behaviour
+
+How the lids meet and close is documented below from product images, videos and a first-hand account. Each item says what it shows and what it does not show.
+
+1. **Amazon product listing images of the 39085** (red tote, dark green lids; https://www.amazon.com/clp/B000189CS2, page title
+   "Akro-Mils 39085 Industrial Plastic Storage Tote with ..."). One lid is shut over the tub (far side); the other is open and hangs down the outside of the
+   near long wall. *Shows:* the open lid's free edge is not straight: a raised tooth with a thick lip, and an angled (diagonal) transition,
+   run out along the edge down to a lower, recessed section. The shut lid's free edge has the matching shape in reverse: a recessed shelf
+   below the lid surface next to a raised section. So along the seam each lid's edge alternates between a raised overhanging lip section and a
+   lower shelf section, joined by diagonals (read from the image by the team, with three blue circles marking the features; the image is not reproduced here). The three circles mark: the open lid's raised tooth with its lip and angled transition (left circle); the shut lid's matching recessed shelf next to a raised section (top circle); and the start of a further lip near the shut lid's end that is cut short, early, by the end of the tote (small circle). The last agrees with the half tooth at each end of the modelled seam (one full tooth plus a half tooth per lid, and the traced polyline's end runs). *Does not show:* which lid overlies in each
+   section, the thicknesses, or anyone closing the lids.
+2. **The maker's product images of four totes** (a manufacturer video frame or product image; possibly of a different Akro-Mils model, so only
+   suggestive for the 39085). A grey tote has one lid shut and the other open and hanging; the shut lid's free edge carries a comb of teeth with
+   small downward tabs at the tooth tips. A green tote in the same image has an open lid hanging against the outside of the long wall.
+   *Shows:* a toothed, non-straight lid edge, and hanging open lids. *Does not show:* the two lids in contact, or the closing order.
+3. **Videos.** In the seller's product video (https://www.amazon.ca/vdp/09c3c1c46a40487390129b9b26503d1c, about 0:19-0:25, clearest from about 0:20) the team sees both lids
+   being shut at the same time; the manufacturer's video (https://youtu.be/B8cnZ48xBc0) and image 2 show lids hanging when open.
+   *Does not show:* either lid being shut alone, or a seam in close-up.
+4. **First-hand account.** A team member who has handled attached-lid totes of this interlocking-lid design first-hand (owning some in the past, and through volunteer work) states that neither lid can be shut on its own: the lids have to be brought down together.
+5. **Product photos of the closed seam** (the retailer product image of the grey 39085, and a close-up of a grey tote's closed lids) from which the seam
+   polyline was traced (see "The seam"). *Shows:* the flush lid tops and the S-shape of the seam seen from above. *Does not show:* anything below the lid top.
+
+**What kind of statement each one is**
+
+| Statement about the product | Status | Basis |
+|---|---|---|
+| Each lid's free edge alternates between a raised overhanging lip section and a lower recessed shelf section, joined by diagonals | OBSERVED | image 1 (open and shut lid edges); consistent with image 2 |
+| Lid tops are flush across the seam; the seam is S-shaped | OBSERVED | item 5 |
+| Seam polyline, to about +-1.5 cm | ESTIMATED (traced from rectified photos) | item 5 |
+| Open lids hang about 270 degrees from closed against the outside of the long wall | OBSERVED | manufacturer's video, image 2 |
+| Both lids are shut at the same time in the seller's video | OBSERVED | item 3 |
+| Where lid A has the lip, lid B has the shelf beneath it, and the reverse | OBSERVED | item 1 |
+| Neither lid can be shut alone; both have to come down together, in registration | FIRST-HAND (team member, item 4), and follows from the lip and shelf shapes seen on each lid (item 1) | item 4; steps 1 to 4 below |
+| Which lid has the upper lip in each section; lap lengths; thicknesses | ESTIMATED / unknown | image 1 shows the lip and shelf shapes on each lid, but not the lids in contact, which lid is on top where, or sizes |
+| Thicknesses: 4 mm step (plate), 2.2 mm overhang, 1.2 mm tongue, 1.0 cm lap, 0.6 mm clearance | ESTIMATED | no measurement |
+| How hard a lid must be pressed, or whether it can be forced shut one at a time | unknown | nothing in the evidence |
+
+**Why neither lid can be shut alone**
+
+1. Along the seam each lid's edge alternates between a raised overhanging lip section and a lower shelf section (observed in item 1; consistent with item 2).
+2. Wherever lid A has the overhanging lip, lid B has the shelf beneath it, and where B has the lip, A has the shelf (the two edges are the matching shapes seen in item 1). When both lids are shut, each lip rests on the other lid's shelf, which is why the tops look flush in the closed-lid photos; the recessed shelf visible on the shut lid in item 1 shows only because the other lid is open (a deduction from the same images).
+3. With A shut first, B's shelf sections would be expected to catch on A's lip (B comes down onto the top of A's lip), and with B shut first the same would happen in the sections where A has the shelf.
+4. So neither lid can be shut alone: both have to come down together, in registration.
+5. This follows from the lip and shelf shapes seen on each lid in item 1 and matches the first-hand account in item 4.
+
+Schematic cross-section across the seam in one section where lid A's lip overlies lid B's shelf (not to scale; the thicknesses are estimates, and
+the flush top of the real lids is not drawn):
+
+        lid A (lip section)        seam        lid B (shelf section)
+        ===================================================  <- lid tops
+        |  A plate, ~4 mm       |^^^^ A's lip ~2 mm thick (estimated)
+        |_______________________|_______                   <- A's lip overlies B's shelf
+                                |  B's shelf ~1 mm (estimated), below A's lip
+                                |__________________________
+                                   B plate, ~4 mm (estimated), further right
+
+The model uses a simplified version of this (hidden lap, below). **Basis of the model:** the alternating lip and shelf sections are observed in the images; that neither lid can be shut alone follows from them and is confirmed by the first-hand account in item 4; the model's lap dimensions are estimates.
 
 ## Setup (one fixed layout; all positions in cm from the midpoint between the two arm bases, x forward, y left)
 
@@ -58,15 +107,14 @@ edge that hangs a few millimetres above the table in any case. This is a positio
 
 ## The seam: what the photos show, and what is estimated
 
-Sources: the retailer product image of the grey Akro-Mils 39085 (lids closed, seen obliquely from one end), a close-up product image of
+Sources (more in "Evidence for the seam and the closing behaviour" above, including the Amazon listing image https://www.amazon.com/clp/B000189CS2): the retailer product image of the grey Akro-Mils 39085 (lids closed, seen obliquely from one end), a close-up product image of
 a grey tote's closed lids (possibly another model), the manufacturer's page (https://akro-mils.com/product/attached-lid-container-39085/)
 and the manufacturer's video (https://youtu.be/B8cnZ48xBc0).
 
 **What the photos show.** The lid tops look flush across the seam: a thin dark line, no raised rim above the lid top. The seam
 is not straight: seen from above it has three direction changes, and between them two long straight stretches that lie on opposite sides
 of the centre line, joined by oblique diagonals (a short step at each seal block is also visible and is not modelled). Two
-round bosses sit on each lid top, hinge knuckles run along both long sides, and raised corner blocks and seal blocks with a hole
-sit at the lid ends.
+round bosses sit on each lid top, hinge knuckles run along both long sides, and raised corner blocks and seal blocks with a hole sit at the lid ends (the hole is seen in the retailer image of the grey 39085 only).
 
 **How it was read.** The four corners of the lid outline in the retailer image of the grey 39085 were used to rectify the photo to a top view (a
 homography to a 53.8 x 38.9 cm rectangle), and the seam's breakpoints were read in that view; the bosses and logos were used to
@@ -96,8 +144,7 @@ tenth of the lid length), a long run R2 (12.8 cm, y +3), a diagonal, and an end 
 across the centre line in R1 (a full tooth) and R3 (half a tooth at the end); the right lid in R2 (full) and R0 (half). **Each lid has one
 full tooth and a half tooth.** The seam is point-symmetric: a half turn about the tote's centre maps it onto itself.
 
-**Hidden lap (ESTIMATED; not visible in any photo).** Nothing in the photos shows how the lids lap under their flush tops, or which lid lies
-on top where. The model uses, in each straight run, an overhang (a thin upper layer, below) on the lid that reaches across the
+**Hidden lap (ESTIMATED).** The alternating lip and shelf sections are observed in product images (see "Evidence"). The images show the lip and shelf shapes on each lid; the sizes (thicknesses, lap lengths) and which lid lies on top where are estimated. The model uses, in each straight run, an overhang (a thin upper layer, below) on the lid that reaches across the
 centre line, lying over a thin tongue of the other lid:
 
 * top faces flush (both at the lid's 4 mm plate top); 0.2 cm gap between the top faces along the seam;
@@ -107,7 +154,7 @@ centre line, lying over a thin tongue of the other lid:
   overhang, with 0.6 mm clearance between the tongue's top and the overhang's underside;
 * in the diagonals both lids are plain 4 mm plate with straight edges (one convex prism per diagonal and lid, 4 mm thick, flush with the plate top), the edges parallel and 0.2 cm apart measured along y, which is about 1.4 mm across the edge at the diagonals' slope of about 46 to 47.5 degrees; each lid's edge starts on the traced polyline at one end of a diagonal and ends one gap beside it at the other.
 
-In these terms the overhang is the UPPER lip and the tongue the LOWER lip. The overhang alternates along the seam (R1 and R3: +y lid; R0 and R2: -y lid), so each lid has the upper lip in some runs and the lower lip in others, as in the team's description of the product. Which lid overlies in each section of the real product, the step (one plate thickness, 4 mm, estimated) and the lap lengths are **not known**; they are estimates, and the layering is not visible from above in the photos.
+In these terms the overhang is the UPPER lip and the tongue the LOWER lip. The overhang alternates along the seam (R1 and R3: +y lid; R0 and R2: -y lid), so each lid has the upper lip in some runs and the lower lip in others, matching the alternation seen in the product images (the alternation is observed; its placement along the seam is the model's choice). Which lid overlies in each section of the real product, the step (one plate thickness, 4 mm, estimated), the overhang and tongue thicknesses and the lap lengths are **not known**; they are estimates.
 Collision boxes only, except the diagonals' plate prisms (convex hulls). The seam offset is limited by the hang test: the overlying lid's top edge reaches 22.45 cm from its hinge axis, which
 must stay 3 mm under the 22.86 cm tote height so that a hanging lid clears the table.
 
@@ -115,12 +162,12 @@ must stay 3 mm under the 22.86 cm tote height so that a hanging lid clears the t
 
 Yes in the model, but at a small angle, and the angle is not the point: the step is. A lid shut first leaves the second one resting on
 it, open 1.4 degrees in the simulator (`TOTE_MODE=seq`, left lid shut first; `lip2d.py`, the offline 2D cross-section, gives 1.3
-degrees in either order). This is the model's version of the interleaved lips: the second lid's lip lands on the first lid's upper lip,
+degrees in either order). This is the model's version of the interleaved lips, whose order-dependence follows from the images and a first-hand account: the second lid's lip lands on the first lid's upper lip,
 about one step high (the step is one plate thickness, 4 mm, estimated; in the model the propped state is 1.4 degrees, which is 5.5 mm
 at the measuring point: 22.45 cm * sin 1.4 degrees; not measured on the product).
 Because the overlying lid alternates along the seam, either closing order blocks. Two lids that come down at the same angle never touch
 (lip2d.py checks every angle from 40 to 0 degrees); with one lid leading by 0.5 degrees or more in the last few degrees the lip
-catches. That is the consequence of the estimated lap, not something the photos show, and nothing was added to the geometry to force it.
+catches. That is the consequence of the estimated lap, not something the images show, and nothing was added to the geometry to force it. The prop angle and the lead tolerance are results of the model, not product measurements.
 
 **Why 0.5 degrees.** The limit separates a seated lid (0.0 degrees in the model) from the lid resting on the other lid's lip (1.4 degrees in the
 model, 5.5 mm at the measuring point). A digital inclinometer's accuracy is about +-0.2 degrees (an estimate), so 0.5 degrees is
@@ -242,7 +289,7 @@ Added so the tote looks like the product. The mechanism, start pose, instruction
 | Recessed panels and ribs | 5 panels per long wall (6 ribs), 2 per end wall (3 ribs, the corner ones shared); ribs 1.4 cm wide, 0.3 cm proud | visual only |
 | Foot | ring 0.6 cm tall, 1.2 cm wide at the base footprint, floor 0.8 cm thick above it | collision |
 | Hinge knuckles | 7 per side, 4 cm long, 1.2 cm diameter, on each hinge axis | visual only (so they cannot snag the rim; the hinge is still one revolute joint) |
-| Seal block hole | 0.6 cm square through each 2 x 2.5 x 0.8 cm block (round in the product) | collision (gap between four boxes) |
+| Seal block hole | 0.6 cm square through each 2 x 2.5 x 0.8 cm block (round in the grey retailer image; size estimated) | collision (gap between four boxes) |
 | Stacking lugs | 5 x 3 x 0.7 cm at each lid's two outer corners, on the hinge side, 5 to 8 cm from the hinge axis | collision |
 | Bosses | two per lid top, 2.4 cm round in the product, 0.3 cm proud; modelled as 2.13 x 2.13 cm squares (same area) at 8 cm from the hinge axis and x +-14 cm | collision |
 | Logo plates | embossed, not modelled; kept clear by the supports | none |
@@ -251,12 +298,13 @@ Added so the tote looks like the product. The mechanism, start pose, instruction
 
 ## Numbers (all ESTIMATED unless marked)
 
+* Sources for the seam and the closing behaviour: Amazon listing image of the 39085 (https://www.amazon.com/clp/B000189CS2); see "Evidence for the seam and the closing behaviour".
 * Catalogue: outside 21.5 x 15 x 9 in, as on the retailer listings the team used (the manufacturer's product page is
   https://akro-mils.com/product/attached-lid-container-39085/). Some listings give the width as 15.25 in; the model uses 15 in.
 * Hinge range: 0 to 265 degrees. The manufacturer's video shows an open lid hanging about straight down (about 270 degrees from
   closed); 265 degrees makes the plate lean 5 degrees away from the rim band. A lid hanging at the stop clears the tapered wall, rim band and slots, and its lowest point is
   about 0.5 cm above the table (4.6 mm in the model).
-* Seam and lap: see "The seam" above (polyline +-1.5 cm; offset 3.0 cm, 6 cm between levels; 0.2 cm top gap; hidden lap dimensions).
+* Seam and lap: see "The seam" above (polyline +-1.5 cm; offset 3.0 cm, 6 cm between levels; 0.2 cm top gap; hidden lap dimensions, all estimated).
 * Seam offset limit: a lid hangs from the hinge at the rim plane, so the lid's top-edge reach (hinge to seam line, 19.45 + 3.0 = 22.45 cm)
   must stay at least 3 mm under the 22.86 cm tote height for the hanging lid to clear the table.
 * Supports: part of the task setup, not of the product; dimensions as in the Setup section.
@@ -268,9 +316,8 @@ Added so the tote looks like the product. The mechanism, start pose, instruction
 * The tote is at x 52 cm so that the whole tote fits in the overhead camera frame while both arms reach the lid ends (pinch
   point at x 26 cm).
 * The pinch holds a 0.4 kg lid by friction on the lid's near end edge; grip force and press force were not measured.
-* The seam geometry (polyline, offset, lap dimensions) is estimated from two photos; which lid overlaps on top in each run is not known.
-* The supports are a modelling choice: the real product has no flat open position (manufacturer's video), so a real trial needs the supports as
-  specified; the supports carry only the flat part of each lid's top face, clear of the bosses, logo plates, lugs and seal blocks (positions estimated), and the level check confirms each lid lies flat.
+* The seam geometry (polyline, offset, lap dimensions) is estimated from two photos; which lid overlaps on top in each run is not known. Basis: the alternating lip and shelf sections are observed in product images, the closing behaviour follows from them and is confirmed by a first-hand account, and the model's simulated lap dimensions are estimates.
+* The supports are a modelling choice: the manufacturer's video and image 2 show the open lids hanging, so a real trial needs the supports as specified; the supports carry only the flat part of each lid's top face, clear of the bosses, logo plates, lugs and seal blocks (positions estimated), and the level check confirms each lid lies flat.
 * The support top is set to the plate's top face in the model (22.46 cm), 4 mm below the 22.9 cm rim plane; the real plate thickness is estimated.
 * The prop angle and the lead tolerance between lids are results of the rigid 2D/3D model with an estimated lap, not product measurements.
 
