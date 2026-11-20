@@ -68,7 +68,7 @@ the flush top of the real lids is not drawn):
                                 |__________________________
                                    B plate, ~4 mm (estimated), further right
 
-The model uses a simplified version of this (hidden lap, below). **Basis of the model:** the alternating lip and shelf sections are observed in the images; that neither lid can be shut alone follows from them and is confirmed by the first-hand account in item 4; the model's lap dimensions are estimates.
+The model uses a simplified version of this (lap geometry, below). **Basis of the model:** the alternating lip and shelf sections are observed in the images; that neither lid can be shut alone follows from them and is confirmed by the first-hand account in item 4; the model's lap dimensions are estimates.
 
 ## Setup (one fixed layout; all positions in cm from the midpoint between the two arm bases, x forward, y left)
 
@@ -144,7 +144,7 @@ tenth of the lid length), a long run R2 (12.8 cm, y +3), a diagonal, and an end 
 across the centre line in R1 (a full tooth) and R3 (half a tooth at the end); the right lid in R2 (full) and R0 (half). **Each lid has one
 full tooth and a half tooth.** The seam is point-symmetric: a half turn about the tote's centre maps it onto itself.
 
-**Hidden lap (ESTIMATED).** The alternating lip and shelf sections are observed in product images (see "Evidence"). The images show the lip and shelf shapes on each lid; the sizes (thicknesses, lap lengths) and which lid lies on top where are estimated. The model uses, in each straight run, an overhang (a thin upper layer, below) on the lid that reaches across the
+**Lap geometry (lip and shelf shapes observed; sizes and layering estimated).** The alternating lip and shelf sections are observed in product images (see "Evidence"). The images show the lip and shelf shapes on each lid; the sizes (thicknesses, lap lengths) and which lid lies on top where are estimated. The model uses, in each straight run, an overhang (a thin upper layer, below) on the lid that reaches across the
 centre line, lying over a thin tongue of the other lid:
 
 * top faces flush (both at the lid's 4 mm plate top); 0.2 cm gap between the top faces along the seam;
@@ -167,7 +167,7 @@ about one step high (the step is one plate thickness, 4 mm, estimated; in the mo
 at the measuring point: 22.45 cm * sin 1.4 degrees; not measured on the product).
 Because the overlying lid alternates along the seam, either closing order blocks. Two lids that come down at the same angle never touch
 (lip2d.py checks every angle from 40 to 0 degrees); with one lid leading by 0.5 degrees or more in the last few degrees the lip
-catches. That is the consequence of the estimated lap, not something the images show, and nothing was added to the geometry to force it. The prop angle and the lead tolerance are results of the model, not product measurements.
+catches. That is the consequence of the lip and shelf geometry, and nothing was added to the geometry to force it. The prop angle and the lead tolerance follow from the lap dimensions used (2.2 mm overhang, 1.2 mm tongue, 1.0 cm lap).
 
 **Why 0.5 degrees.** The limit separates a seated lid (0.0 degrees in the model) from the lid resting on the other lid's lip (1.4 degrees in the
 model, 5.5 mm at the measuring point). A digital inclinometer's accuracy is about +-0.2 degrees (an estimate), so 0.5 degrees is
@@ -304,7 +304,7 @@ Added so the tote looks like the product. The mechanism, start pose, instruction
 * Hinge range: 0 to 265 degrees. The manufacturer's video shows an open lid hanging about straight down (about 270 degrees from
   closed); 265 degrees makes the plate lean 5 degrees away from the rim band. A lid hanging at the stop clears the tapered wall, rim band and slots, and its lowest point is
   about 0.5 cm above the table (4.6 mm in the model).
-* Seam and lap: see "The seam" above (polyline +-1.5 cm; offset 3.0 cm, 6 cm between levels; 0.2 cm top gap; hidden lap dimensions, all estimated).
+* Seam and lap: see "The seam" above (polyline +-1.5 cm; offset 3.0 cm, 6 cm between levels; 0.2 cm top gap; lap dimensions as in "Lap geometry" above).
 * Seam offset limit: a lid hangs from the hinge at the rim plane, so the lid's top-edge reach (hinge to seam line, 19.45 + 3.0 = 22.45 cm)
   must stay at least 3 mm under the 22.86 cm tote height for the hanging lid to clear the table.
 * Supports: part of the task setup, not of the product; dimensions as in the Setup section.

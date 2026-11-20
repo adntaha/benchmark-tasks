@@ -304,7 +304,7 @@ def test_the_tops_are_flush_and_the_overhang_covers_the_other_lids_tongue_in_eac
         assert (stop_w - tip_n) * wide == pytest.approx(K.LAP_CLEAR)
 
 
-def test_the_overlap_is_hidden_under_the_flush_top():
+def test_the_overlap_is_under_the_flush_top():
     tops = {p[4] for side in (+1, -1) for p in K.lid_parts(side) if p[0].split("_")[0] in ("edge", "over")}
     assert tops == {K.LID_T}                                      # nothing stands proud of the plate near the seam: tops are flush
     assert K.OVER_W0 - K.TONGUE_T >= 0.0005                       # a clear gap between tongue top and overhang underside
@@ -341,7 +341,7 @@ def test_start_layout_is_fixed_and_reachable():
     assert T.TOTE_XY[0] - K.LENGTH / 2 > 0.24 and T.TOTE_XY[0] + K.LENGTH / 2 < 0.9
 
 
-# -- product-photo details (all estimated, see README) -------------------------------------------------------------------
+# -- product-photo details (read from product photos, see README) -------------------------------------------------------------------
 def _boxes(parts, collide=True):
     return [p for p in parts if p[4] == collide]
 

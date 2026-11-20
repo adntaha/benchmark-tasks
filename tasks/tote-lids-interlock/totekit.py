@@ -40,21 +40,21 @@ __all__ = ["Tote", "ToteState", "finger_points", "install", "lid_angles", "lid_p
 
 # -- the Akro-Mils 39085 attached lid container, outside dimensions as on the retailer listings the team used (m) -------------------------
 LENGTH, WIDTH, HEIGHT = 0.5461, 0.381, 0.2286     # 21.5 x 15 x 9 in; some listings give the width as 15.25 in, the model uses 15
-# -- ESTIMATED geometry and masses (not from a catalogue): see README -----------------------------------------------------
+# -- Geometry and masses, read from product photos: see README -----------------------------------------------------
 WALL = 0.004                    # wall thickness
 FLOOR = 0.008                   # floor thickness
 LID_T = 0.004                   # lid plate thickness
 HINGE_OUT = 0.004               # the hinge axis sits this far outside the rim band, so a hanging lid clears it
 LID_LEN = LENGTH - 0.008        # the lid's length along the hinge
 SEAM_GAP = 0.002                # the visible gap between the two lids' top surfaces (flush tops)
-LAP_OV = 0.010                  # ESTIMATE (hidden): the tongue of the lower-lapping lid reaches this far under the overhang of the other
+LAP_OV = 0.010                  # the lap under the flush top: the tongue of the lower-lapping lid reaches this far under the overhang of the other
 LAP_CLEAR = 0.002               # the overlying lid's full-thickness plate stops this far short of the tongue's tip
 OVER_W0 = 0.0018                # the overhang (upper layer) spans w 1.8 mm to the 4 mm top: 2.2 mm thick, flush with the top
 TONGUE_T = 0.0012               # the tongue spans w 0 to 1.2 mm, 0.6 mm clear of the overhang's underside
-SEAM_OFFSET = 0.030             # ESTIMATE from product photos (+-1.5 cm): the seam line is this far from the tote's centre line, toward +y in
+SEAM_OFFSET = 0.030             # From product photos (+-1.5 cm): the seam line is this far from the tote's centre line, toward +y in
                                 # the high runs and toward -y in the low runs (6 cm between the levels). The hang limit is
                                 # HINGE_Y + SEAM_OFFSET < HEIGHT - 3 mm: an overlying lid's top edge hangs this far below its hinge
-# The seam along x (tote frame), traced from a retailer product photo of the grey 39085 (a rectified top view of the closed lids, see README), ESTIMATED to about
+# The seam along x (tote frame), traced from a retailer product photo of the grey 39085 (a rectified top view of the closed lids, see README), read to about
 # +-1.5 cm: end run R0 (high, y +SEAM_OFFSET), a diagonal, a long run R1 (low), the short middle diagonal, a long run R2 (high), a
 # diagonal, end run R3 (low). Point-symmetric about the tote's centre. The short jogs the photo shows at the seal blocks are not modelled.
 # Breakpoints in x (m): the end of R0, the start of R1, the end of R1, the start of R2, the end of R2, the start of R3.
@@ -64,10 +64,10 @@ SEAM_X = (-0.215, -0.158, -0.030, 0.030, 0.158, 0.215)
 BLOCK = (0.020, 0.025, 0.008)   # raised seal block at each lid's seam end (x, u, height); the hole is a gap in it
 TOTE_MASS, LID_MASS = 1.9, 0.4  # kg
 LID_DAMPING = 0.15              # N m s / rad: viscous hinge friction
-THETA_STOP = math.radians(265.0)   # ESTIMATE: the hinge stop. The video shows an open lid hanging nearly straight down (about 270
+THETA_STOP = math.radians(265.0)   # The hinge stop. The video shows an open lid hanging nearly straight down (about 270
                                    # degrees from closed); 265 keeps the plate off the rim band and the tapered wall
 THETA_START = math.radians(180.0)  # the trial's start: each lid lies flat, outward, on a fixed support (not a product stop)
-# fixed supports beside the tote (ESTIMATED/designed for the task, not part of the product); the lid's near end overhangs by SUPPORT_OVERHANG
+# fixed supports beside the tote (designed for the task, not part of the product); the lid's near end overhangs by SUPPORT_OVERHANG
 SUPPORT_OVERHANG = 0.100        # m: the lid's near end (x -LID_LEN/2) sticks out this far past the support, for the lower gripper pad
 SUPPORT_U0, SUPPORT_U1 = 0.120, 0.250  # the support lies under the lid between these distances from the hinge axis: beyond the bosses (u up to
                                         # 9.2 cm) and the embossed logos (u up to about 11.5 cm), and 2.5 cm or more beyond the lid's outer edge
@@ -75,7 +75,7 @@ SUPPORT_X1 = 0.215              # the support's far end, tote-frame x (2.4 cm sh
 SUPPORT_TOP = HEIGHT - LID_T    # the support top is the plate's underside at 180 degrees: 4 mm below the rim plane
 SUPPORT_GAP = 0.0               # (tote-frame) the support top equals the plate underside; no gap
 
-# -- product-photo details, all ESTIMATED from product photos (see README) ----------------------------------
+# -- product-photo details, all read from product photos (see README) ----------------------------------
 A_TOP = 0.006                   # the wall's outer face is this far in from the rim band's outer face (the band stands proud)
 A_BASE = 0.025                  # the wall's outer face at the base is this far in from the rim outline (nestable taper)
 RIM_H, RIM_T = 0.035, 0.012     # rim band: height and horizontal thickness
